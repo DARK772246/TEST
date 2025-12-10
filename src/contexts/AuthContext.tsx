@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string, type: 'admin' | 'student'): Promise<boolean> => {
+    console.log(`Attempting to log in with email: ${email} and password: ${password}`);
     try {
       if (type === 'admin') {
         const admin = await getAdminByEmail(email);
