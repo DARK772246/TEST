@@ -84,7 +84,7 @@ let db: IDBPDatabase<StudentDBSchema> | null = null;
 export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
   if (db) return db;
 
-  db = await openDB<StudentDBSchema>('student-management', 2, {
+  db = await openDB<StudentDBSchema>('student-management-v2', 2, {
     upgrade(database, oldVersion) {
       if (oldVersion < 1) {
         // Students store
