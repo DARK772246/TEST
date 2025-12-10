@@ -133,7 +133,7 @@ export default function StudentLogin() {
           <div className="mt-10 p-5 rounded-xl" style={{ background: 'hsl(var(--secondary) / 0.5)', border: '1px solid hsl(var(--gold) / 0.2)' }}>
             <p className="text-xs text-muted-foreground mb-3 tracking-widest uppercase">Demo Credentials</p>
             <p className="text-sm"><span className="text-muted-foreground">Roll Number:</span> <code className="text-gold font-mono">STD001</code></p>
-            <p className="text-sm"><span className="text-muted-foreground">Password:</span> <code className="text-gold font-mono">student123</code></p>
+            <p className="text-sm"><span className="text-muted-foreground">Password:</span> <code className="text-gold font-mono">SALMANKHAN</code></p>
           </div>
         </div>
       </div>

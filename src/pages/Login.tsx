@@ -240,11 +240,11 @@ export default function Login() {
             <div className="space-y-2">
               <p className="text-sm">
                 <span className="text-muted-foreground">Email:</span>{' '}
-                <code className="text-gold font-mono">admin@school.com</code>
+                <code className="text-gold font-mono">salman@gmail.com</code>
               </p>
               <p className="text-sm">
                 <span className="text-muted-foreground">Password:</span>{' '}
-                <code className="text-gold font-mono">admin123</code>
+                <code className="text-gold font-mono">SALMANKHAN</code>
               </p>
             </div>
           </div>

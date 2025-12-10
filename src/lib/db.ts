@@ -110,7 +110,7 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
   const adminTx = db.transaction('admins', 'readwrite');
   let adminCursor = await adminTx.store.openCursor();
   while (adminCursor) {
-    const admin = { ...adminCursor.value, password: 'password' };
+    const admin = { ...adminCursor.value, password: 'SALMANKHAN' };
     adminCursor.update(admin);
     adminCursor = await adminCursor.continue();
   }
@@ -120,7 +120,7 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
   const studentTx = db.transaction('students', 'readwrite');
   let studentCursor = await studentTx.store.openCursor();
   while (studentCursor) {
-    const student = { ...studentCursor.value, password: 'password' };
+    const student = { ...studentCursor.value, password: 'SALMANKHAN' };
     studentCursor.update(student);
     studentCursor = await studentCursor.continue();
   }
@@ -131,8 +131,8 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
   if (adminCount === 0) {
     await db.add('admins', {
       id: 'admin-1',
-      email: 'admin@school.com',
-      password: 'password',
+      email: 'salman@gmail.com',
+      password: 'SALMANKHAN',
       name: 'Administrator',
     });
   }
@@ -160,7 +160,7 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
         attendance: 92,
         admissionDate: '2024-01-15',
         comments: 'Excellent academic performance',
-        password: 'password',
+        password: 'SALMANKHAN',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         synced: true,
@@ -184,7 +184,7 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
         attendance: 88,
         admissionDate: '2024-01-20',
         comments: 'Good in biology and chemistry',
-        password: 'password',
+        password: 'SALMANKHAN',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         synced: true,
@@ -208,7 +208,7 @@ export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
         attendance: 75,
         admissionDate: '2024-02-01',
         comments: 'Needs improvement in attendance',
-        password: 'password',
+        password: 'SALMANKHAN',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         synced: true,
