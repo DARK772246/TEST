@@ -84,37 +84,34 @@ let db: IDBPDatabase<StudentDBSchema> | null = null;
 export async function initDB(): Promise<IDBPDatabase<StudentDBSchema>> {
   if (db) return db;
 
-  db = await openDB<StudentDBSchema>('student-management', 1, {
-    upgrade(database) {
-      // Students store
-      const studentStore = database.createObjectStore('students', { keyPath: 'id' });
-      studentStore.createIndex('by-roll', 'rollNumber', { unique: true });
-      studentStore.createIndex('by-class', 'class');
-      studentStore.createIndex('by-name', 'fullName');
-      studentStore.createIndex('by-email', 'email', { unique: true });
+  db = await openDB<StudentDBSchema>('student-management', 2, {
+    upgrade(database, oldVersion) {
+      if (oldVersion < 1) {
+        // Students store
+        const studentStore = database.createObjectStore('students', { keyPath: 'id' });
+        studentStore.createIndex('by-roll', 'rollNumber', { unique: true });
+        studentStore.createIndex('by-class', 'class');
+        studentStore.createIndex('by-name', 'fullName');
+        studentStore.createIndex('by-email', 'email', { unique: true });
 
-      // Admins store
-      const adminStore = database.createObjectStore('admins', { keyPath: 'id' });
-      adminStore.createIndex('by-email', 'email', { unique: true });
+        // Admins store
+        const adminStore = database.createObjectStore('admins', { keyPath: 'id' });
+        adminStore.createIndex('by-email', 'email', { unique: true });
 
-      // Notifications store
-      const notificationStore = database.createObjectStore('notifications', { keyPath: 'id' });
-      notificationStore.createIndex('by-student', 'studentId');
+        // Notifications store
+        const notificationStore = database.createObjectStore('notifications', { keyPath: 'id' });
+        notificationStore.createIndex('by-student', 'studentId');
 
-      // Sync queue store
-      database.createObjectStore('syncQueue', { keyPath: 'id' });
+        // Sync queue store
+        database.createObjectStore('syncQueue', { keyPath: 'id' });
+      }
+      if (oldVersion < 2) {
+        // Clear existing admins to ensure the new default admin is created
+        const adminStore = database.transaction.objectStore('admins');
+        adminStore.clear();
+      }
     },
   });
-
-  // Reset all admin passwords
-  const adminTx = db.transaction('admins', 'readwrite');
-  let adminCursor = await adminTx.store.openCursor();
-  while (adminCursor) {
-    const admin = { ...adminCursor.value, password: 'SALMANKHAN' };
-    adminCursor.update(admin);
-    adminCursor = await adminCursor.continue();
-  }
-  await adminTx.done;
 
   // Reset all student passwords
   const studentTx = db.transaction('students', 'readwrite');
