@@ -4,7 +4,7 @@ import { getAdminByEmail, getStudentByEmail, getStudentByRollNumber, Student, Ad
 type UserType = 'admin' | 'student' | null;
 
 interface AuthContextType {
-  user: Admin | Student | null;
+  user: Omit<Admin, 'password'> | Omit<Student, 'password'> | null;
   userType: UserType;
   isLoading: boolean;
   login: (email: string, password: string, type: 'admin' | 'student') => Promise<boolean>;
@@ -14,8 +14,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// WARNING: This is not a secure way to compare passwords.
+// In a real application, you should use a secure hashing and salting mechanism.
+const insecurePasswordCompare = (password: string, hash: string) => {
+  return password === hash;
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<Admin | Student | null>(null);
+  const [user, setUser] = useState<Omit<Admin, 'password'> | Omit<Student, 'password'> | null>(null);
   const [userType, setUserType] = useState<UserType>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,7 +31,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedType = localStorage.getItem('sms_user_type') as UserType;
     
     if (storedUser && storedType) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      // Omit password from user object
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userWithoutPassword } = parsedUser;
+      setUser(userWithoutPassword);
       setUserType(storedType);
     }
     setIsLoading(false);
@@ -35,19 +45,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       if (type === 'admin') {
         const admin = await getAdminByEmail(email);
-        if (admin && admin.password === password) {
-          setUser(admin);
+        if (admin && insecurePasswordCompare(password, admin.password)) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { password, ...adminWithoutPassword } = admin;
+          setUser(adminWithoutPassword);
           setUserType('admin');
-          localStorage.setItem('sms_user', JSON.stringify(admin));
+          localStorage.setItem('sms_user', JSON.stringify(adminWithoutPassword));
           localStorage.setItem('sms_user_type', 'admin');
           return true;
         }
       } else {
         const student = await getStudentByEmail(email);
-        if (student && student.password === password) {
-          setUser(student);
+        if (student && insecurePasswordCompare(password, student.password)) {
+           // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { password, ...studentWithoutPassword } = student;
+          setUser(studentWithoutPassword);
           setUserType('student');
-          localStorage.setItem('sms_user', JSON.stringify(student));
+          localStorage.setItem('sms_user', JSON.stringify(studentWithoutPassword));
           localStorage.setItem('sms_user_type', 'student');
           return true;
         }
@@ -62,10 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginStudent = async (rollNumber: string, password: string): Promise<boolean> => {
     try {
       const student = await getStudentByRollNumber(rollNumber);
-      if (student && student.password === password) {
-        setUser(student);
+      if (student && insecurePasswordCompare(password, student.password)) {
+         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...studentWithoutPassword } = student;
+        setUser(studentWithoutPassword);
         setUserType('student');
-        localStorage.setItem('sms_user', JSON.stringify(student));
+        localStorage.setItem('sms_user', JSON.stringify(studentWithoutPassword));
         localStorage.setItem('sms_user_type', 'student');
         return true;
       }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useTheme } from '@/contexts/ThemeContext';
 import { processSyncQueue } from '@/lib/db';
@@ -201,9 +202,9 @@ export default function AdminSettings() {
           </h3>
           
           <div className="space-y-4">
-            <button className="btn-secondary w-full">
+            <Link to="/admin/settings/change-password" className="btn-secondary w-full">
               Change Password
-            </button>
+            </Link>
             <button className="btn-secondary w-full">
               Manage Admin Accounts
             </button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { StudentLayout } from '@/components/layout/StudentLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -129,11 +130,11 @@ export default function StudentSettings() {
             Security
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Contact the administration to change your password.
+            You can change your password here.
           </p>
-          <button className="btn-secondary" disabled>
+          <Link to="/student/settings/change-password" className="btn-secondary">
             Change Password
-          </button>
+          </Link>
         </div>
 
         {/* Account Info */}

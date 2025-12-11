@@ -202,11 +202,14 @@ export default function AdminStudents() {
                 className="fixed inset-0 z-10"
                 onClick={() => setActiveDropdown(null)}
               />
-              <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-card border border-border rounded-lg shadow-lg py-1 animate-scale-in">
+              <div className="absolute right-0 top-full mt-1 z-20 w-40 bg-card border border-border rounded-lg shadow-lg py-1 animate-scale-in">
                 <Link
                   to={`/admin/students/${student.id}`}
                   className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary"
-                  onClick={() => setActiveDropdown(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDropdown(null);
+                  }}
                 >
                   <Eye className="w-4 h-4" />
                   View Profile
@@ -214,13 +217,19 @@ export default function AdminStudents() {
                 <Link
                   to={`/admin/students/${student.id}/edit`}
                   className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary"
-                  onClick={() => setActiveDropdown(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveDropdown(null);
+                  }}
                 >
                   <Edit className="w-4 h-4" />
                   Edit
                 </Link>
                 <button
-                  onClick={() => handleDelete(student.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(student.id);
+                  }}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/10"
                 >
                   <Trash2 className="w-4 h-4" />
