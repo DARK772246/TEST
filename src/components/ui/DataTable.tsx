@@ -53,13 +53,21 @@ export function DataTable<T extends { id: string }>({
   return (
     <div className="card-elevated overflow-hidden">
       <div className="overflow-x-auto">
+<<<<<<< HEAD
         <table className="w-full">
+=======
+        <table className="w-full min-w-[640px]">
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
           <thead>
             <tr className="border-b border-border">
               {columns.map((column) => (
                 <th
                   key={column.key}
+<<<<<<< HEAD
                   className={`table-header text-left px-6 py-4 ${column.className || ''}`}
+=======
+                  className={`table-header text-left px-4 py-3 text-xs sm:text-sm whitespace-nowrap ${column.className || ''}`}
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
                 >
                   {column.header}
                 </th>
@@ -70,7 +78,18 @@ export function DataTable<T extends { id: string }>({
             {data.map((item, index) => (
               <tr
                 key={item.id}
+<<<<<<< HEAD
                 onClick={() => onRowClick?.(item)}
+=======
+                onClick={(e) => {
+                  // Only trigger row click if the target is not a button or interactive element
+                  const target = e.target as HTMLElement;
+                  if (target.closest('button') || target.closest('a')) {
+                    return;
+                  }
+                  onRowClick?.(item);
+                }}
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
                 className={`
                   border-b border-border last:border-0 transition-colors
                   ${onRowClick ? 'cursor-pointer hover:bg-secondary/50' : ''}
@@ -79,7 +98,11 @@ export function DataTable<T extends { id: string }>({
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 {columns.map((column) => (
+<<<<<<< HEAD
                   <td key={column.key} className={`table-cell px-6 ${column.className || ''}`}>
+=======
+                  <td key={column.key} className={`table-cell px-4 py-3 text-sm ${column.className || ''}`}>
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
                     {column.render
                       ? column.render(item)
                       : (item as any)[column.key]}

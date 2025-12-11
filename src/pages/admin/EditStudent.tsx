@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { addStudent } from '@/lib/db';
-import { ArrowLeft, Upload, User, BookOpen, Phone, MapPin, DollarSign } from 'lucide-react';
+import { getStudentById, updateStudent, Student } from '@/lib/db';
+import { ArrowLeft, Upload, User, BookOpen, Phone, DollarSign, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const subjects = [
@@ -21,10 +21,13 @@ const classes = ['9', '10', '11', '12'];
 const semesters = ['1st', '2nd'];
 const genders = ['Male', 'Female', 'Other'];
 
-export default function AddStudent() {
+export default function EditStudent() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<string>('');
+  const [student, setStudent] = useState<Student | null>(null);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -44,12 +47,52 @@ export default function AddStudent() {
     attendance: 0,
     admissionDate: new Date().toISOString().split('T')[0],
     comments: '',
-<<<<<<< HEAD
-    password: 'student123',
-=======
-    password: 'password',
->>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
+    password: '',
   });
+
+  useEffect(() => {
+    if (id) {
+      loadStudent(id);
+    }
+  }, [id]);
+
+  const loadStudent = async (studentId: string) => {
+    try {
+      const data = await getStudentById(studentId);
+      if (data) {
+        setStudent(data);
+        setProfilePhoto(data.profilePhoto || '');
+        setFormData({
+          fullName: data.fullName,
+          fatherName: data.fatherName,
+          gender: data.gender,
+          class: data.class,
+          semester: data.semester,
+          rollNumber: data.rollNumber,
+          registrationNumber: data.registrationNumber,
+          subjects: data.subjects,
+          phone: data.phone,
+          email: data.email,
+          address: data.address,
+          feeStatus: data.feeStatus,
+          feePaid: data.feePaid,
+          feeTotal: data.feeTotal,
+          attendance: data.attendance,
+          admissionDate: data.admissionDate,
+          comments: data.comments,
+          password: data.password,
+        });
+      } else {
+        toast.error('Student not found');
+        navigate('/admin/students');
+      }
+    } catch (error) {
+      toast.error('Failed to load student');
+      navigate('/admin/students');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,22 +116,34 @@ export default function AddStudent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (!id) return;
+    
+    setIsSaving(true);
 
     try {
-      await addStudent({
+      await updateStudent(id, {
         ...formData,
         profilePhoto,
       });
-      toast.success('Student added successfully');
-      navigate('/admin/students');
+      toast.success('Student updated successfully');
+      navigate(`/admin/students/${id}`);
     } catch (error) {
-      console.error('Error adding student:', error);
-      toast.error('Failed to add student');
+      console.error('Error updating student:', error);
+      toast.error('Failed to update student');
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -102,8 +157,8 @@ export default function AddStudent() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="page-header mb-0">
-            <h1 className="page-title">Add New Student</h1>
-            <p className="page-description">Enter the student's information below.</p>
+            <h1 className="page-title">Edit Student</h1>
+            <p className="page-description">Update {student?.fullName}'s information.</p>
           </div>
         </div>
 
@@ -395,7 +450,7 @@ export default function AddStudent() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Initial Attendance (%)
+                  Attendance (%)
                 </label>
                 <input
                   type="number"
@@ -408,7 +463,7 @@ export default function AddStudent() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Default Password
+                  Password
                 </label>
                 <input
                   type="text"
@@ -443,16 +498,16 @@ export default function AddStudent() {
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isSaving}
               className="btn-primary flex items-center gap-2"
             >
-              {isLoading ? (
+              {isSaving ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                  Adding...
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
                 </>
               ) : (
-                'Add Student'
+                'Save Changes'
               )}
             </button>
           </div>

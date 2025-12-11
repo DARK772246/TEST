@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
 import { StudentLayout } from '@/components/layout/StudentLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { updateStudent, Student } from '@/lib/db';
+=======
+import { StudentLayout } from '@/components/layout/StudentLayout';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { updateStudent, updateStudentPassword, Student } from '@/lib/db';
+import { ChangePasswordDialog } from '@/components/ui/ChangePasswordDialog';
+import { DeveloperBrand } from '@/components/ui/DeveloperBrand';
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 import { Sun, Moon, User, Lock, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -15,6 +24,10 @@ export default function StudentSettings() {
   const [phone, setPhone] = useState(student?.phone || '');
   const [address, setAddress] = useState(student?.address || '');
   const [isUpdating, setIsUpdating] = useState(false);
+<<<<<<< HEAD
+=======
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 
   const handleUpdateProfile = async () => {
     if (!student?.id) return;
@@ -30,6 +43,14 @@ export default function StudentSettings() {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+    if (!student?.id) return false;
+    return await updateStudentPassword(student.id, currentPassword, newPassword);
+  };
+
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
   return (
     <StudentLayout>
       <div className="max-w-2xl mx-auto space-y-6">
@@ -130,11 +151,22 @@ export default function StudentSettings() {
             Security
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
+<<<<<<< HEAD
             You can change your password here.
           </p>
           <Link to="/student/settings/change-password" className="btn-secondary">
             Change Password
           </Link>
+=======
+            Keep your account secure by changing your password regularly.
+          </p>
+          <button 
+            onClick={() => setShowPasswordDialog(true)}
+            className="btn-primary"
+          >
+            Change Password
+          </button>
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
         </div>
 
         {/* Account Info */}
@@ -162,7 +194,23 @@ export default function StudentSettings() {
             </div>
           </div>
         </div>
+<<<<<<< HEAD
       </div>
+=======
+
+        {/* About */}
+        <div className="card-elevated p-6">
+          <DeveloperBrand />
+        </div>
+      </div>
+
+      <ChangePasswordDialog
+        open={showPasswordDialog}
+        onOpenChange={setShowPasswordDialog}
+        onChangePassword={handlePasswordChange}
+        userType="student"
+      />
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
     </StudentLayout>
   );
 }

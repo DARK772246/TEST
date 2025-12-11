@@ -2,17 +2,27 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DataTable } from '@/components/ui/DataTable';
+<<<<<<< HEAD
+=======
+import { DeleteConfirmDialog } from '@/components/ui/DeleteConfirmDialog';
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 import { getAllStudents, deleteStudent, Student } from '@/lib/db';
 import {
   Search,
   Filter,
   UserPlus,
+<<<<<<< HEAD
   MoreHorizontal,
+=======
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
   Eye,
   Edit,
   Trash2,
   Download,
+<<<<<<< HEAD
   Upload,
+=======
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -26,7 +36,13 @@ export default function AdminStudents() {
   const [filterClass, setFilterClass] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+<<<<<<< HEAD
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+=======
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 
   useEffect(() => {
     loadStudents();
@@ -66,6 +82,7 @@ export default function AdminStudents() {
 
   const uniqueClasses = [...new Set(students.map((s) => s.class))].sort();
 
+<<<<<<< HEAD
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this student?')) {
       try {
@@ -77,6 +94,28 @@ export default function AdminStudents() {
       }
     }
     setActiveDropdown(null);
+=======
+  const handleDeleteClick = (student: Student) => {
+    setStudentToDelete(student);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!studentToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteStudent(studentToDelete.id);
+      setStudents(students.filter((s) => s.id !== studentToDelete.id));
+      toast.success('Student deleted successfully');
+      setDeleteDialogOpen(false);
+      setStudentToDelete(null);
+    } catch (error) {
+      toast.error('Failed to delete student');
+    } finally {
+      setIsDeleting(false);
+    }
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
   };
 
   const exportToCSV = () => {
@@ -183,6 +222,7 @@ export default function AdminStudents() {
     {
       key: 'actions',
       header: '',
+<<<<<<< HEAD
       className: 'w-12',
       render: (student: Student) => (
         <div className="relative">
@@ -238,6 +278,45 @@ export default function AdminStudents() {
               </div>
             </>
           )}
+=======
+      className: 'w-16',
+      render: (student: Student) => (
+        <div 
+          className="flex items-center gap-1"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <Link
+            to={`/admin/students/${student.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+            title="View"
+          >
+            <Eye className="w-4 h-4" />
+          </Link>
+          <Link
+            to={`/admin/students/${student.id}/edit`}
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-foreground transition-colors"
+            title="Edit"
+          >
+            <Edit className="w-4 h-4" />
+          </Link>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleDeleteClick(student);
+            }}
+            className="p-2 hover:bg-destructive/10 rounded-lg text-muted-foreground hover:text-destructive transition-colors"
+            title="Delete"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
         </div>
       ),
     },
@@ -372,6 +451,18 @@ export default function AdminStudents() {
           emptyMessage="No students found matching your criteria"
         />
       </div>
+<<<<<<< HEAD
+=======
+
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Student"
+        description={`Are you sure you want to delete ${studentToDelete?.fullName}? This action cannot be undone and all associated data will be permanently removed.`}
+        isLoading={isDeleting}
+      />
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
     </AdminLayout>
   );
 }

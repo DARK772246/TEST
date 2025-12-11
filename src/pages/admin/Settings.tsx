@@ -1,8 +1,19 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useTheme } from '@/contexts/ThemeContext';
 import { processSyncQueue } from '@/lib/db';
+=======
+import React, { useState, useEffect, useRef } from 'react';
+import { AdminLayout } from '@/components/layout/AdminLayout';
+import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { processSyncQueue, updateAdminPassword, exportAllData, importAllData } from '@/lib/db';
+import { ChangePasswordDialog } from '@/components/ui/ChangePasswordDialog';
+import { AdminManagementDialog } from '@/components/ui/AdminManagementDialog';
+import { DeveloperBrand } from '@/components/ui/DeveloperBrand';
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 import {
   Sun,
   Moon,
@@ -14,13 +25,27 @@ import {
   Shield,
   Wifi,
   WifiOff,
+<<<<<<< HEAD
+=======
+  HardDrive,
+  Users,
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminSettings() {
   const { theme, toggleTheme } = useTheme();
+<<<<<<< HEAD
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isSyncing, setIsSyncing] = useState(false);
+=======
+  const { user } = useAuth();
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [showAdminDialog, setShowAdminDialog] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -52,6 +77,7 @@ export default function AdminSettings() {
     }
   };
 
+<<<<<<< HEAD
   const handleExportData = () => {
     const data = localStorage.getItem('sms_backup');
     if (!data) {
@@ -66,6 +92,50 @@ export default function AdminSettings() {
     a.download = 'sms-backup.json';
     a.click();
     toast.success('Data exported successfully');
+=======
+  const handleBackup = async () => {
+    try {
+      const data = await exportAllData();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sms-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Backup created successfully');
+    } catch (error) {
+      toast.error('Failed to create backup');
+    }
+  };
+
+  const handleRestore = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const content = e.target?.result as string;
+      const result = await importAllData(content);
+      
+      if (result.success) {
+        toast.success('Data restored successfully! Please refresh the page.');
+      } else {
+        toast.error(result.error || 'Failed to restore data');
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+    if (!user) return false;
+    return await updateAdminPassword((user as any).id, currentPassword, newPassword);
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
   };
 
   return (
@@ -143,6 +213,7 @@ export default function AdminSettings() {
               <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
               {isSyncing ? 'Syncing...' : 'Sync Data Now'}
             </button>
+<<<<<<< HEAD
 
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -157,6 +228,50 @@ export default function AdminSettings() {
                 Import Backup
               </button>
             </div>
+=======
+          </div>
+        </div>
+
+        {/* Backup & Restore */}
+        <div className="card-elevated p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <HardDrive className="w-5 h-5 text-primary" />
+            Backup & Restore
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Create a backup of all your data or restore from a previous backup.
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button
+              onClick={handleBackup}
+              className="btn-secondary flex items-center justify-center gap-2 py-4"
+            >
+              <Download className="w-5 h-5" />
+              <div className="text-left">
+                <p className="font-medium">Create Backup</p>
+                <p className="text-xs text-muted-foreground">Export all data as JSON</p>
+              </div>
+            </button>
+            
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="btn-secondary flex items-center justify-center gap-2 py-4"
+            >
+              <Upload className="w-5 h-5" />
+              <div className="text-left">
+                <p className="font-medium">Restore Backup</p>
+                <p className="text-xs text-muted-foreground">Import from JSON file</p>
+              </div>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleRestore}
+              className="hidden"
+            />
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
           </div>
         </div>
 
@@ -194,6 +309,7 @@ export default function AdminSettings() {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Security */}
         <div className="card-elevated p-6">
           <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -208,10 +324,43 @@ export default function AdminSettings() {
             <button className="btn-secondary w-full">
               Manage Admin Accounts
             </button>
+=======
+        {/* Account Settings */}
+        <div className="card-elevated p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            Account & Security
+          </h3>
+          
+          <div className="space-y-4">
+            {/* Current Account Info */}
+            <div className="p-4 bg-secondary rounded-xl">
+              <p className="text-sm text-muted-foreground mb-1">Logged in as</p>
+              <p className="font-medium text-foreground">{user?.email || 'admin@school.com'}</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button 
+                onClick={() => setShowPasswordDialog(true)}
+                className="btn-primary flex items-center justify-center gap-2"
+              >
+                <Shield className="w-4 h-4" />
+                Change Password
+              </button>
+              <button 
+                onClick={() => setShowAdminDialog(true)}
+                className="btn-secondary flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                Manage Admins
+              </button>
+            </div>
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
           </div>
         </div>
 
         {/* About */}
+<<<<<<< HEAD
         <div className="card-elevated p-6 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">
             Student Management System
@@ -225,6 +374,28 @@ export default function AdminSettings() {
           </p>
         </div>
       </div>
+=======
+        <div className="card-elevated p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-2 text-center">
+            Student Management System
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4 text-center">Version 1.0.0</p>
+          <DeveloperBrand />
+        </div>
+      </div>
+
+      <ChangePasswordDialog
+        open={showPasswordDialog}
+        onOpenChange={setShowPasswordDialog}
+        onChangePassword={handlePasswordChange}
+        userType="admin"
+      />
+
+      <AdminManagementDialog
+        open={showAdminDialog}
+        onOpenChange={setShowAdminDialog}
+      />
+>>>>>>> 01bd450c63ccdf5da618003b6be8ac6aa4e318e7
     </AdminLayout>
   );
 }
